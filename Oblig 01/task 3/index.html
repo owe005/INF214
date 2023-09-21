@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Check the console!</h1>
+    </body>
+	
+<script>
+function itmp(iterable_input, func_to_be_applied) {
+    let i = 0;
+    return {
+       next: () => {
+          const value = iterable_input[i];
+          const done = i >= iterable_input.length;
+          i++;
+          return { value: done ? undefined : func_to_be_applied(value), done };
+       }
+    };
+}
+
+const p = itmp( [10, 20], x => x*x);
+
+console.log(p.next()); // 100 
+console.log(p.next()); // 400
+console.log(p.next()); // N/A
+
+console.log("---")
+
+const q = itmp( [1,2,3], x => x+1);
+console.log(q.next()); // 2
+console.log(q.next()); // 3
+console.log(q.next()); // 4 
+console.log(q.next()); // N/A
+</script>
+</html>
+
+

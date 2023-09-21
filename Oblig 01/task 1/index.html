@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Simplify any expression(s)!</h1>
+        <p>Just separate them with a semicolon.</p>
+        <p>For example "2x-x^2;x-x;3x-x"</p>
+        <form>
+            <input type="text" id="input" />
+            <input type="button" value="Simplify Expression" onclick="main()" />
+        </form>
+        <div id="output"></div>
+    </body>
+
+<script>
+    
+async function main() {
+    for await (const n of find(document.getElementById("input").value)) {
+        simplifyExpr(n);
+        continue;
+    }
+};
+
+async function* find(data) {
+    const arr = data.split(";")
+    for (let i = 0; i < arr.length; i++) {
+        yield arr[i];
+    }
+}
+
+async function simplifyExpr(n) {
+    let input = encodeURIComponent(n);
+    let response = await fetch(`https://newton.vercel.app/api/v2/simplify/${input}`);
+    let response_json = await response.json();
+    let output = response_json.result;
+    res = '"' + n + '"' + " simplified is " + '"' + output + '"';
+    document.getElementById("output").innerHTML += res + '<br>';
+}
+</script>
+</html>

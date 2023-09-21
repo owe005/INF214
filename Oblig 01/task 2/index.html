@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Simplify any expression(s)!</h1>
+        <p>Just separate them with a semicolon.</p>
+        <p>For example "2x-x^2;x-x;3x-x".</p>
+		<p>First one to be completed is returned.</p>
+        <form>
+            <input type="text" id="input" />
+            <input type="button" value="Simplify Expression" onclick="main()" />
+        </form>
+        <div id="output"></div>
+    </body>
+
+<script>
+
+async function main() {
+    let input = document.getElementById("input").value;    
+    
+    let arr = input.split(";");        
+
+    let promises = [];
+
+    for (input of arr) {
+        if (input.length != 0) {
+            promises.push(simplifyExpr(input))            
+        }                
+    }
+
+    Promise.race(promises).then((result) => { // Let's race!        
+		result = '"'+result[0] + '"' + " simplified is " + '"' + result[1] + '"';
+        document.getElementById("output").innerHTML = result;       
+      });
+}
+
+async function simplifyExpr(n) {
+    try {   
+        let response = await fetch(`https://newton.vercel.app/api/v2/simplify/${n}`);    
+
+        if (!response.ok) {        
+            throw new Error(response.status);        
+        }    
+        
+        let response_json = await response.json();  
+        let out_expr = response_json.result;    
+
+        if (out_expr.includes('syntax error')) {
+            out_expr = "Syntax Error!";        
+        }
+
+        return [n, out_expr]
+        }
+    
+    catch {
+        return [n, "Error!"];
+    }
+}
+</script>
+</html>
